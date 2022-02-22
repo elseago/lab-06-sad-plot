@@ -1,7 +1,7 @@
 ---
 title: "Lab 06 - Sad plots"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Elayna Seago"
+date: "2/22/22"
 output: github_document
 ---
 
@@ -14,20 +14,41 @@ library(dsbox)
 
 ### Exercise 1
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+```{r}
+staff <- read_csv("data/instructional-staff.csv")
+```
 
-### Exercise 2
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
 
-### Exercise 3
 
-...
+```{r change-data-struc}
+staff_long <- staff %>%
+  pivot_longer(cols = -faculty_type, names_to = "year") %>%
+  mutate(value = as.numeric(value))
 
-Add exercise headings as needed.
+staff_long
+```
+
+
+```{r plot-bad-example}
+staff_long %>%
+  ggplot(aes(x = year, y = value, color = faculty_type)) +
+  geom_line()
+
+```
+
+```{r fig.align="center", echo = FALSE,fig.width = 8}
+staff_long %>%
+  ggplot(aes(x = year, y = value, group = faculty_type, color = faculty_type)) +
+  geom_line() +
+  labs(title = "Instructional Employees From 1975 to 2011" , y = "Number in Position") 
+  
+```
+
+```{r}
+staff_long %>% 
+  ggplot(aes(x = year, y = value , fill = faculty_type)) +
+  geom_bar(stat = "identity") 
+  
+```
+
