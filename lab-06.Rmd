@@ -50,7 +50,7 @@ staff_long %>%
   ggplot(aes(x = year, y = value , fill = faculty_type)) +
   geom_col() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-  labs(title = "Proportion of Faculty in Each Position Over Time" , y = "Proportion")
+  labs(title = "Proportion of Faculty in Each Position Over Time" , y = "Proportion" , x = "Year")
   
 ```
 
@@ -99,6 +99,8 @@ biggest_fisheries_total %>%
   arrange(desc(total))
 ```
 
+### Here I change to lots of different data frames because I didn't think ahead to my final end goal
+
 ```{r}
 biggest_fisheries_total_long <- biggest_fisheries_total %>%
   pivot_longer(cols = -country, names_to = "harvest") %>%
@@ -110,14 +112,13 @@ biggest_fisheries_total_long %>%
 ```
 
 
-
 ```{r}
 
 biggest_fisheries_total_long %>% 
   ggplot(aes(x = reorder(country , -value) , y = value , fill = harvest)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
-  labs(title = "Tons of Fish Harvested Through Capture or Aquaculture" , subtitle = "Data from the Top Ten Fish Producing Countries" , y = "Tons of Fish Harvested per year" , x = "Country")
+  labs(title = "Tons of Fish Harvested Through Capture or Aquaculture" , subtitle = "Data from the Top Ten Fish Producing Countries" , y = "Tons of Fish Harvested per Year" , x = "Country")
 
 ```
 
@@ -149,7 +150,7 @@ Whickham %>%
   labs(title = "Health Outcomes (Alive or Dead) of Smokers and Non-Smokers at 20 Year Follow Up" , y = "Number of People")
 ```
 
-This graph and probability table shows that people who smoke are more likely to live for another 20 years.
+5. This graph and probability table shows that people who smoke are more likely to live for another 20 years compared to people who do not smoke. This does not support what I expected to see.
 
 ```{r}
 Whickham %>% 
@@ -176,15 +177,15 @@ Whickham <- Whickham %>%
 Whickham %>% 
   ggplot(aes(x = smoker , fill = outcome)) +
   geom_bar()+
-  labs(title = "Health Outcomes (Alive or Dead) of Smokers and Non-Smokers at 20 Year Follow Up" , subtitle = "Across 3 Age Ranges" , y = "Number of People")+
+  labs(title = "Health Outcomes of Smokers/Non-Smokers at 20 Year Follow Up" , subtitle = "Data From 3 Age Ranges" , y = "Number of People")+
   facet_wrap(~age_cat)
 ```
 
-
+7. This shows that in each age group, a higher proportion of people who are not smokers are alive 20 years later compared to the proportion of smokers who are alive 20 years later. This lines up with what I originally hypothesized and shows that age differences in those who smoke and do not smoke were a third variable that influenced the findings in the original graph and probability table.
 ```{r}
 Whickham %>%
   count(smoker, age_cat, outcome)%>% 
-  group_by(smoker) %>% 
+  group_by(smoker , age_cat) %>% 
   mutate(prop = n / sum(n)) 
 ```
 

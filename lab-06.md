@@ -66,8 +66,9 @@ staff_long %>%
 ``` r
 staff_long %>% 
   ggplot(aes(x = year, y = value , fill = faculty_type)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  labs(title = "Proportion of Faculty in Each Position Over Time" , y = "Proportion" , x = "Year")
 ```
 
 ![](lab-06_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
@@ -164,121 +165,179 @@ big_fisheries %>%
 biggest_fisheries_total <- fisheries %>% 
   filter(total > 3800000)
 
-biggest_fisheries_total
+biggest_fisheries_total %>% 
+  arrange(desc(total))
 ```
 
     ## # A tibble: 10 × 4
     ##    country        capture aquaculture    total
     ##    <chr>            <dbl>       <dbl>    <dbl>
-    ##  1 Bangladesh     1674770     2203554  3878324
-    ##  2 China         17800000    63700000 81500000
+    ##  1 China         17800000    63700000 81500000
+    ##  2 Indonesia      6584419    16600000 23184419
     ##  3 India          5082332     5703002 10785334
-    ##  4 Indonesia      6584419    16600000 23184419
-    ##  5 Japan          3275263     1067994  4343257
-    ##  6 Peru           3811802      100187  3911989
-    ##  7 Philippines    2027992     2200914  4228906
-    ##  8 Russia         4773413      173840  4947253
-    ##  9 United States  4931017      444369  5375386
-    ## 10 Vietnam        2785940     3634531  6420471
+    ##  4 Vietnam        2785940     3634531  6420471
+    ##  5 United States  4931017      444369  5375386
+    ##  6 Russia         4773413      173840  4947253
+    ##  7 Japan          3275263     1067994  4343257
+    ##  8 Philippines    2027992     2200914  4228906
+    ##  9 Peru           3811802      100187  3911989
+    ## 10 Bangladesh     1674770     2203554  3878324
+
+### Here I change to lots of different data frames because I didn’t think ahead to my final end goal
 
 ``` r
 biggest_fisheries_total_long <- biggest_fisheries_total %>%
   pivot_longer(cols = -country, names_to = "harvest") %>%
   filter(harvest %in% c("capture" , "aquaculture")) %>% 
-  mutate(value = as.character(value))
+  mutate(value = as.numeric(value))
 
-biggest_fisheries_total_long
+biggest_fisheries_total_long %>% 
+  arrange(desc(value))
 ```
 
     ## # A tibble: 20 × 3
-    ##    country       harvest     value   
-    ##    <chr>         <chr>       <chr>   
-    ##  1 Bangladesh    capture     1674770 
-    ##  2 Bangladesh    aquaculture 2203554 
-    ##  3 China         capture     17800000
-    ##  4 China         aquaculture 63700000
-    ##  5 India         capture     5082332 
-    ##  6 India         aquaculture 5703002 
-    ##  7 Indonesia     capture     6584419 
-    ##  8 Indonesia     aquaculture 16600000
-    ##  9 Japan         capture     3275263 
-    ## 10 Japan         aquaculture 1067994 
-    ## 11 Peru          capture     3811802 
-    ## 12 Peru          aquaculture 100187  
-    ## 13 Philippines   capture     2027992 
-    ## 14 Philippines   aquaculture 2200914 
-    ## 15 Russia        capture     4773413 
-    ## 16 Russia        aquaculture 173840  
-    ## 17 United States capture     4931017 
-    ## 18 United States aquaculture 444369  
-    ## 19 Vietnam       capture     2785940 
-    ## 20 Vietnam       aquaculture 3634531
+    ##    country       harvest        value
+    ##    <chr>         <chr>          <dbl>
+    ##  1 China         aquaculture 63700000
+    ##  2 China         capture     17800000
+    ##  3 Indonesia     aquaculture 16600000
+    ##  4 Indonesia     capture      6584419
+    ##  5 India         aquaculture  5703002
+    ##  6 India         capture      5082332
+    ##  7 United States capture      4931017
+    ##  8 Russia        capture      4773413
+    ##  9 Peru          capture      3811802
+    ## 10 Vietnam       aquaculture  3634531
+    ## 11 Japan         capture      3275263
+    ## 12 Vietnam       capture      2785940
+    ## 13 Bangladesh    aquaculture  2203554
+    ## 14 Philippines   aquaculture  2200914
+    ## 15 Philippines   capture      2027992
+    ## 16 Bangladesh    capture      1674770
+    ## 17 Japan         aquaculture  1067994
+    ## 18 United States aquaculture   444369
+    ## 19 Russia        aquaculture   173840
+    ## 20 Peru          aquaculture   100187
 
 ``` r
 biggest_fisheries_total_long %>% 
-  ggplot(aes(x = reorder(country , harvest) , y = value , fill = harvest)) +
+  ggplot(aes(x = reorder(country , -value) , y = value , fill = harvest)) +
   geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+  labs(title = "Tons of Fish Harvested Through Capture or Aquaculture" , subtitle = "Data from the Top Ten Fish Producing Countries" , y = "Tons of Fish Harvested per Year" , x = "Country")
 ```
 
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
-    ## returning NA
-
 ![](lab-06_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+### Exercise 3
+
+``` r
+library(mosaicData)
+data(Whickham)
+```
+
+1.  These data come from an observational experiment.
+2.  There are 1314 observations. Each represents a woman.
+3.  There are 3 variables. Outcome status, smoker status, age.
+4.  I would expect smoking to have a negative relationship with health
+    outcome.
+
+``` r
+Whickham %>%
+  count(smoker, outcome)
+```
+
+    ##   smoker outcome   n
+    ## 1     No   Alive 502
+    ## 2     No    Dead 230
+    ## 3    Yes   Alive 443
+    ## 4    Yes    Dead 139
+
+``` r
+Whickham %>% 
+  ggplot(aes(x = outcome)) +
+  geom_bar() +
+  facet_wrap(~smoker)+
+  labs(title = "Health Outcomes (Alive or Dead) of Smokers and Non-Smokers at 20 Year Follow Up" , y = "Number of People")
+```
+
+![](lab-06_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+Whickham %>% 
+  ggplot(aes(x = smoker , fill = outcome)) +
+  geom_bar()+
+  labs(title = "Health Outcomes (Alive or Dead) of Smokers and Non-Smokers at 20 Year Follow Up" , y = "Number of People")
+```
+
+![](lab-06_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
+
+5.  This graph and probability table shows that people who smoke are
+    more likely to live for another 20 years compared to people who do
+    not smoke. This does not support what I expected to see.
+
+``` r
+Whickham %>% 
+  count(smoker , outcome) %>% 
+  group_by(smoker) %>% 
+  mutate(prop = n / sum(n))
+```
+
+    ## # A tibble: 4 × 4
+    ## # Groups:   smoker [2]
+    ##   smoker outcome     n  prop
+    ##   <fct>  <fct>   <int> <dbl>
+    ## 1 No     Alive     502 0.686
+    ## 2 No     Dead      230 0.314
+    ## 3 Yes    Alive     443 0.761
+    ## 4 Yes    Dead      139 0.239
+
+``` r
+Whickham <- Whickham %>% 
+  mutate(age_cat = case_when(
+    age <= 44 ~"18-44" ,
+    age > 44 & age <= 64 ~ "44-64" ,
+    age > 64 ~ "65+"
+  ))
+```
+
+``` r
+Whickham %>% 
+  ggplot(aes(x = smoker , fill = outcome)) +
+  geom_bar()+
+  labs(title = "Health Outcomes of Smokers/Non-Smokers at 20 Year Follow Up" , subtitle = "Data From 3 Age Ranges" , y = "Number of People")+
+  facet_wrap(~age_cat)
+```
+
+![](lab-06_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+7.  This shows that in each age group, a higher proportion of people who
+    are not smokers are alive 20 years later compared to the proportion
+    of smokers who are alive 20 years later. This lines up with what I
+    originally hypothesized and shows that age differences in those who
+    smoke and do not smoke were a third variable that influenced the
+    findings in the original graph and probability table.
+
+``` r
+Whickham %>%
+  count(smoker, age_cat, outcome)%>% 
+  group_by(smoker , age_cat) %>% 
+  mutate(prop = n / sum(n)) 
+```
+
+    ## # A tibble: 12 × 5
+    ## # Groups:   smoker, age_cat [6]
+    ##    smoker age_cat outcome     n   prop
+    ##    <fct>  <chr>   <fct>   <int>  <dbl>
+    ##  1 No     18-44   Alive     327 0.965 
+    ##  2 No     18-44   Dead       12 0.0354
+    ##  3 No     44-64   Alive     147 0.735 
+    ##  4 No     44-64   Dead       53 0.265 
+    ##  5 No     65+     Alive      28 0.145 
+    ##  6 No     65+     Dead      165 0.855 
+    ##  7 Yes    18-44   Alive     270 0.947 
+    ##  8 Yes    18-44   Dead       15 0.0526
+    ##  9 Yes    44-64   Alive     167 0.676 
+    ## 10 Yes    44-64   Dead       80 0.324 
+    ## 11 Yes    65+     Alive       6 0.12  
+    ## 12 Yes    65+     Dead       44 0.88
