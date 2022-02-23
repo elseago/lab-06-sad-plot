@@ -48,7 +48,144 @@ staff_long %>%
 ```{r}
 staff_long %>% 
   ggplot(aes(x = year, y = value , fill = faculty_type)) +
-  geom_bar(stat = "identity") 
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  labs(title = "Proportion of Faculty in Each Position Over Time" , y = "Proportion")
   
 ```
+
+### Exercises 2
+```{r}
+fisheries <- read_csv("data/fisheries.csv")
+fisheries
+```
+
+```{r}
+big_fisheries <- fisheries %>% 
+  filter(total > 500000)
+
+big_fisheries
+```
+### ### For my first attempted improvement, I filtered the data to only include countries with more than 500,000 tons of harvest, made a bar plot, and flipped it sideways so all the names could be read.
+
+```{r fig.align="center", echo = FALSE,fig.width= 25}
+big_fisheries %>% 
+  ggplot(aes(x = reorder(country , total), y = total , fill = capture)) +
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  labs(title = "Countries Fish Production" , subtitle = "For countries with more than 500,000 tons of harvest" , x = "Country")
+```
+
+### For my second attempted improvement I also did a log transformation of tons harvested.
+
+```{r fig.align="center", echo = FALSE,fig.width= 15}
+p <- ggplot(big_fisheries , aes(x = reorder(country , total), y = total , fill = capture))
+p <- p + scale_y_log10()
+p + geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = "Countries Fish Production" , subtitle = "For countries with more than 500,000 tons of harvest" , x = "Country" , y = "Tons Harvested, log transformed")
+```
+
+### I dont really think either of these visualizations are that good. I think to make a better visualization I would need to think about what info I was trying to convey. I think a more interesting visualization would be a graph showing the breakdown of aquaculture vs capture in the 10 countries with the greatest fish harvest.
+
+```{r}
+big_fisheries %>% 
+  arrange(desc(total))
+
+biggest_fisheries_total <- fisheries %>% 
+  filter(total > 3800000)
+
+biggest_fisheries_total %>% 
+  arrange(desc(total))
+```
+
+```{r}
+biggest_fisheries_total_long <- biggest_fisheries_total %>%
+  pivot_longer(cols = -country, names_to = "harvest") %>%
+  filter(harvest %in% c("capture" , "aquaculture")) %>% 
+  mutate(value = as.numeric(value))
+
+biggest_fisheries_total_long %>% 
+  arrange(desc(value))
+```
+
+
+
+```{r}
+
+biggest_fisheries_total_long %>% 
+  ggplot(aes(x = reorder(country , -value) , y = value , fill = harvest)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+  labs(title = "Tons of Fish Harvested Through Capture or Aquaculture" , subtitle = "Data from the Top Ten Fish Producing Countries" , y = "Tons of Fish Harvested per year" , x = "Country")
+
+```
+
+### Exercise 3
+
+```{r}
+library(mosaicData)
+data(Whickham)
+```
+
+1. These data come from an observational experiment.
+2. There are 1314 observations. Each represents a woman.
+3. There are 3 variables. Outcome status, smoker status, age.
+4. I would expect smoking to have a negative relationship with health outcome.
+
+```{r}
+Whickham %>%
+  count(smoker, outcome)
+
+Whickham %>% 
+  ggplot(aes(x = outcome)) +
+  geom_bar() +
+  facet_wrap(~smoker)+
+  labs(title = "Health Outcomes (Alive or Dead) of Smokers and Non-Smokers at 20 Year Follow Up" , y = "Number of People")
+
+Whickham %>% 
+  ggplot(aes(x = smoker , fill = outcome)) +
+  geom_bar()+
+  labs(title = "Health Outcomes (Alive or Dead) of Smokers and Non-Smokers at 20 Year Follow Up" , y = "Number of People")
+```
+
+This graph and probability table shows that people who smoke are more likely to live for another 20 years.
+
+```{r}
+Whickham %>% 
+  count(smoker , outcome) %>% 
+  group_by(smoker) %>% 
+  mutate(prop = n / sum(n))
+
+```
+
+
+
+```{r}
+Whickham <- Whickham %>% 
+  mutate(age_cat = case_when(
+    age <= 44 ~"18-44" ,
+    age > 44 & age <= 64 ~ "44-64" ,
+    age > 64 ~ "65+"
+  ))
+
+```
+
+
+```{r}
+Whickham %>% 
+  ggplot(aes(x = smoker , fill = outcome)) +
+  geom_bar()+
+  labs(title = "Health Outcomes (Alive or Dead) of Smokers and Non-Smokers at 20 Year Follow Up" , subtitle = "Across 3 Age Ranges" , y = "Number of People")+
+  facet_wrap(~age_cat)
+```
+
+
+```{r}
+Whickham %>%
+  count(smoker, age_cat, outcome)%>% 
+  group_by(smoker) %>% 
+  mutate(prop = n / sum(n)) 
+```
+
 
